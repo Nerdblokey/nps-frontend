@@ -6,7 +6,7 @@ export default function TestConnection() {
   const [status, setStatus] = useState('Checking...');
 
   useEffect(() => {
-    fetch('https://cors-anywhere.herokuapp.com/https://nps-backend-production.up.railway.app/api/health', {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/health`, {
       headers: {
         'Origin': 'https://vercel.app'
       }
