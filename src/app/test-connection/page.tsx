@@ -1,14 +1,12 @@
 'use client';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
-
 import { useEffect, useState } from 'react';
 
 export default function TestConnection() {
   const [status, setStatus] = useState('Checking...');
 
   useEffect(() => {
-    fetch(`${API_URL}/api/health`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/health`, {
       headers: {
         'Origin': 'https://vercel.app'
       }
