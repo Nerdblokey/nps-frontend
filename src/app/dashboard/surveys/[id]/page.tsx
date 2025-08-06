@@ -1,40 +1,42 @@
 import React from 'react';
+import { apiClient } from '@/lib/api';
+import Card, { CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { notFound } from 'next/navigation';
-import apiClient from '@/lib/api';
 
-interface SurveyPageProps {
+interface SurveyDetailPageProps {
   params: { id: string };
 }
 
-const SurveyPage = async ({ params }: SurveyPageProps) => {
+export default async function SurveyDetailPage({ params }: SurveyDetailPageProps) {
   const { id } = params;
 
-  let survey;
   try {
-    survey = await apiClient.getSurvey(id);
+    const survey = await apiClient.getSurvey(id);
+
+    if (!survey) {
+      notFound();
+    }
+
+    return (
+      <div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl">{survey.title}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 mb-4">{survey.description || 'No description provided.'}</p>
+            <p className="text-sm text-gray-500">
+              Created on {new Date(survey.created_at).toLocaleDateString('en-GB')}
+            </p>
+            <p className="text-sm mt-2">
+              Status: {survey.is_active ? 'Active' : 'Inactive'}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   } catch (error) {
-    console.error(error);
-    return notFound();
+    console.error('Failed to load survey:', error);
+    notFound();
   }
-
-  if (!survey) return notFound();
-
-  return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">{survey.title}</h1>
-      <p className="text-gray-700 mb-6">{survey.description || 'No description provided.'}</p>
-      <div className="text-sm text-gray-500">
-        Created on: {new Date(survey.created_at).toLocaleDateString()}
-      </div>
-      <div className="mt-4">
-        Status: {survey.is_active ? (
-          <span className="text-green-600 font-semibold">Active</span>
-        ) : (
-          <span className="text-gray-600">Inactive</span>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default SurveyPage;
+}
